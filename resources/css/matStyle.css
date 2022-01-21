@@ -1,11 +1,9 @@
 
 body{
-    color:white;
+    color:black;
     font-family: 'Courier New', Courier, monospace;
-    background-image: url("../bg.jpg");
-
 }
-.root{
+.fullscreen{
     padding: 0px;
     margin: 50px;
     border: 0px;
@@ -40,13 +38,29 @@ body{
     height: 100%;
     box-shadow: 2px 2px 5px black;
 }
+.content-area{
+    margin: auto;
+    width: 800px;
+}
+.main-text{
+    font-size: 20px;
+}  
+.side-img{
+    float: right;
+    margin: 20px;
+}
+.page-nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+h1{
+    text-align: center;
+}
 .btn{
     border: 0;
     opacity: 1;
+    transform: rotate(360);
     transition-duration: .6s;
-}
-
-:hover{
-    transition-duration: .6s;
-    transform: rotate(360deg);
 }
