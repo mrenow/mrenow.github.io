@@ -1,7 +1,9 @@
 
 body{
     color:black;
+    margin: 0;
     font-family: 'Courier New', Courier, monospace;
+    padding: 1px;
 }
 .fullscreen{
     padding: 0px;
@@ -11,6 +13,7 @@ body{
     width: calc(100vw);
     height: calc(100vh);
 }
+
 .content-row{
     display: flex;
     flex-direction: row;
@@ -84,4 +87,10 @@ h1{
 .centered{
     display: flex;
     justify-content: center;
+}
+.bg{
+    z-index: -1;
+}
+.title{
+    margin: 45px 0 0 0;
 }
