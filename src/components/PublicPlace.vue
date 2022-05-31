@@ -14,7 +14,7 @@
       <h1> About Me</h1>
       <img
         class="side-img"
-        src="resources/fetus.png"
+        src="/src/assets/fetus.png"
       >
       <p>
         I dont feel particularly inclined to write about boring stuff right now. So youre going to have to settle for a nice picture of me:

@@ -70,8 +70,8 @@ export async function logOut () {
 }
 // attempt login using remembered information
 
-await bindLoadingFlag(logIn(), authLoading)
-console.log(authData)
-
-console.log(profileData)
+bindLoadingFlag(logIn(), authLoading).then(() => {
+    console.log(authData)
+    console.log(profileData)
+})
 // logOut()

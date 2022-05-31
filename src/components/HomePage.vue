@@ -15,7 +15,7 @@
           <router-link to="/blog-edit">
             <img
               class="img-btn"
-              src="resources/blog_button.png"
+              src="/src/assets/blog_button.png"
             >
           </router-link>
         </div>
@@ -23,7 +23,7 @@
           <router-link to="/public-place">
             <img
               class="img-btn"
-              src="resources/public_button.png"
+              src="/src/assets/public_button.png"
             >
           </router-link>
         </div>

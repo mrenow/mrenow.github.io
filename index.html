@@ -1,45 +1,26 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="resources/css/matStyle.css">
-    </head>
-
-        <div class="corner">
-            <a href="file:///home/ezra/Programming/Git/githubio/index.html">Local Version</a>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>Vite App</title>
+    <!-- <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://unpkg.com/vue-router@4"></script> -->
+  </head>
+  <body>
+    <div id="app">
+      <div class="content-area">
+        <nav class="content-bar">
+          <router-link to="/">Home</router-link>
+          <router-link to="/public-place">Public Place</router-link>
+          <router-link to="/blogs">Blogs</router-link>
+          <router-link to="/auth">Are you me?</router-link>
+        </nav>
+        <router-view></router-view>
         </div>
-
-        <div class="fullscreen corner centered bg">
-            <img class="img-decal" src="resources/index_bg.png">    
-        </div>
-
-        <div class="header">
-        </div>
-        <div class="title">
-            <h1>This is the main page yay!</h1>
-        </div>
-        <div class="content-area">
-            <div class="text-content"> <!-- adjusted to be fixed width -->
-                <h2>What stuff exists here</h2>
-                <p>
-                    This site has nothing on it right now! But it will have some blogs and hopefully some animations or embedded projects! I dont know!
-                </p>
-            </div>
-            <div class="content-column">
-                <div class="content-row">
-                    <div class="flex-child-fill square mid-margin">
-                        <a href="blog/blog1.html">
-                            <img class="img-btn" src="resources/blog_button.png">
-                        </a>
-                    </div>
-                    <div class="flex-child-fill square mid-margin">
-                        <a href="public_place.html">
-                            <img class="img-btn" src="resources/public_button.png">
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </body>
-    <footer><script> </script></footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/scripts/auth.ts"></script>
+  </body>
 </html>
