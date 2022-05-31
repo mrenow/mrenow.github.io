@@ -5,7 +5,7 @@ import Markdown from 'vue3-markdown-it'
 
 import './assets/css/matStyle.css'
 import 'highlight.js/styles/monokai.css'
-
+import App from './App.vue'
 import Auth from './components/Auth.vue'
 import NewBlog from './components/NewBlog.vue'
 import ViewBlog from './components/ViewBlog.vue'
@@ -37,7 +37,7 @@ const router = createRouter({
 })
 
 // 5. Create and mount the root instance.
-const app = createApp({})
+const app = createApp(App)
 // Make sure to _use_ the router instance to make the
 // whole app router-aware.
 app.use(router)

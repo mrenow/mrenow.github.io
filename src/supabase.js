@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
 
 console.log(import.meta.env)
 console.log(import.meta.env.VITE_SUPABASE_URL)
