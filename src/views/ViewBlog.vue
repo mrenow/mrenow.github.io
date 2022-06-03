@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import BlogSearch from './BlogSearch.vue'
-import BlogArea from './BlogArea.vue'
+import BlogSearch from '../components/BlogSearch.vue'
+import BlogArea from '../components/BlogArea.vue'
 
 const blogTitle = ref('')
 const isLoading = ref(false)

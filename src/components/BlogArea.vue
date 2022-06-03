@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Blog post component. Source text can either be from a value or an external source
 // Simply use the external source to load text.
-import { Ref, ref, toRef, computed, readonly, watch } from 'vue'
+import { Ref, ref, toRef, computed, readonly, watch, watchEffect } from 'vue'
 import Markdown from 'vue3-markdown-it'
 import MarkdownHTML from 'markdown-it-html'
 import MarkdownLatex from 'markdown-it-texmath'
@@ -34,6 +34,7 @@ const isLoadingValue = computed({
 let contentText : Ref<string>
 let resources: Ref<string[]>
 if (props.externalText !== undefined) {
+    console.log('taking from editor')
     contentText = toRef(props, 'externalText')
     resources = toRef(props, 'externalResources')
     watch(contentText, function () { internalScriptsLoaded = false })
@@ -59,8 +60,7 @@ if (props.externalText !== undefined) {
 // Computed properties
 // Compute Markdown Preview
 
-const blogPreviewInnerMarkdown = ref('')
-watch(contentText, function () { blogPreviewInnerMarkdown.value = `# ${props.title}\n${contentText.value}` })
+const blogPreviewInnerMarkdown=computed(()=>`# ${props.title}\n${contentText.value}`)
 
 function runInternalScripts () {
     if (internalScriptsLoaded) return

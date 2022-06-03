@@ -1,4 +1,4 @@
-import { authData } from './auth'
+import { authData, profileData } from './auth'
 import { supabase } from '../supabase'
 
 const requestLocks = {
@@ -58,12 +58,14 @@ export async function submitPost (title: string, content: string) {
         console.error('Cant submit, not authenticated')
         return
     }
-    const { error } = await supabase
+    const { error, data } = await supabase
         .from('posts')
         .upsert({
-            title,
-            content,
+            title: title,
+            content: content,
+            owner: profileData.id,
             modified: new Date().toISOString()
         })
     if (error) throw error
+    return data
 }

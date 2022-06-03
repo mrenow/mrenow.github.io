@@ -1,23 +1,25 @@
 import { createApp } from 'vue'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { createPinia } from 'pinia'
 import Markdown from 'vue3-markdown-it'
+
 
 import './assets/css/matStyle.css'
 import 'highlight.js/styles/monokai.css'
 import App from './App.vue'
-import Auth from './components/Auth.vue'
-import NewBlog from './components/NewBlog.vue'
-import ViewBlog from './components/ViewBlog.vue'
-import HomePage from './components/HomePage.vue'
-import PublicPlace from './components/PublicPlace.vue'
-import NotFound from './components/NotFound.vue'
+
+import NewBlog from './views/NewBlog.vue'
+import ViewBlog from './views/ViewBlog.vue'
+import Auth from './views/Auth.vue'
+import HomePage from './views/HomePage.vue'
+import PublicPlace from './views/PublicPlace.vue'
+import NotFound from './views/NotFound.vue'
 
 // 2. Define some routes
 // Each route should map to a component.
 // We'll talk about nested routes later.
 
-const defaultText = 'I am a failure.'
 const routes = [
     { path: '/', component: HomePage },
     { path: '/auth', component: Auth },
@@ -35,11 +37,10 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes // short for `routes: routes`
 })
+const pinia = createPinia()
 
-// 5. Create and mount the root instance.
 const app = createApp(App)
-// Make sure to _use_ the router instance to make the
-// whole app router-aware.
-app.use(router)
-app.use(Markdown)
-app.mount('#app')
+    .use(router)
+    .use(pinia)
+    .use(Markdown)
+    .mount('#app')
