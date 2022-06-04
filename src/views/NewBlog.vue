@@ -58,7 +58,8 @@ function autosave () {
 }
 
 
-setInterval(() => autosave())
+setInterval(() => autosave(), 20000)
+
 
 </script>
 
