@@ -17,7 +17,7 @@ const titleNotExists = computed(() => !allTitles.value.includes(title.value))
 async function updateTitles () {
     allTitles.value = await loadTitles()
 }
-onMounted(updateTitles)
+onMounted(updateTitles) // Perform in pinia later
 </script>
 
 <template>

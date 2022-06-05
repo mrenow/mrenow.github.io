@@ -13,7 +13,12 @@ const REQ_MAXIMUM = {
     submitPost: 3
 }
 
-export const NO_POST_ERR = 'No post with given name exists'
+export class NoPostException extends Error{
+    constructor(name){
+        super(`No post with given name ${name} exists`)
+    }
+}
+
 export const TOO_MANY_REQS_ERR = 'Requests are too frequent!'
 
 function requestLock (requestId) {
@@ -33,9 +38,7 @@ export async function loadPost (titleText: string) {
         .select('content')
         .eq('title', titleText)
     if (error) throw error
-    if (data.length === 0) {
-        throw new Error(`${NO_POST_ERR}: ${titleText}`)
-    }
+    if (data.length === 0) throw new NoPostException(titleText)
     return {
         title: titleText,
         content: data[0].content as string,

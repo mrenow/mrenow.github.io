@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref,  onMounted, readonly } from 'vue'
 import { bindLoadingFlag } from '../scripts/helpers'
-import { loadPost, NO_POST_ERR, submitPost } from '../scripts/network'
+import { loadPost, NoPostException, submitPost } from '../scripts/network'
 /* state management:
 use a blogeditor textarea component: this way no bindings need to be done.
 We can ensure state integrity by ensuring the invariants:
@@ -44,11 +44,10 @@ async function changePost(newTitle: string){
             data = await loadPost(newTitle)
         } catch (err) {
             console.log(err)
-            if (err.message === NO_POST_ERR) data = {content: '', resources: []}
+            if (err instanceof NoPostException) data = {content: '', resources: []}
             else throw err
         }
-
-        await setText(data.content)
+        await overwriteText(data.content)
         title.value = newTitle
         saveable.value = true
     } catch (err) {
@@ -58,7 +57,7 @@ async function changePost(newTitle: string){
 }
 
 
-async function setText(text: string){
+async function overwriteText(text: string){
     console.log(textMutated.value)
     if (textMutated.value !== 0 && confirm("Save unsaved changes?") && !(await save())) throw new Error('Save Failure')
     insertText(text, 0, editArea.value.value.length)

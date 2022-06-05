@@ -51,8 +51,6 @@ const showSave = computed(() => !authLoading.value && authData.authenticated)
 //     }
 // }
 
-const hello = ref('hello')
-
 function autosave () {
     if (doAutosave.value && editor.value.textMutated) editor.value.save()
 }
