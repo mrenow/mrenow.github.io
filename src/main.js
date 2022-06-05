@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createPinia } from 'pinia'
+import Persist from 'pinia-plugin-persistedstate'
 import Markdown from 'vue3-markdown-it'
 
 
@@ -37,7 +38,7 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes // short for `routes: routes`
 })
-const pinia = createPinia()
+const pinia = createPinia().use(Persist)
 
 const app = createApp(App)
     .use(router)

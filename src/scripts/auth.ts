@@ -26,36 +26,7 @@ export const profileData : {
     handle?: string;
 } = reactive({ ..._initProfileData })
 
-export const authLoading = ref(true)
-export async function logIn (userEmail = null, password = null, persist = null) {
-    // Check if logged in
-    if (authData.authenticated) {
-        return
-    }
-    // Check localStorage for username and password
-    userEmail = userEmail ?? localStorage.getItem('userEmail')
-    password = password ?? localStorage.getItem('password')
-    if (userEmail === undefined || password === undefined) {
-        authData.authenticated = false
-        return
-    }
-    const { user, session, error } = await supabase.auth.signIn({ email: userEmail, password })
-    if (error) {
-        Object.assign(authData, { authenticated: false, error })
-        return
-    }
-    // On success
-    Object.assign(profileData, (await supabase.from('user_data').select('*').eq('id', user.id)).data[0])
-    Object.assign(authData, { authenticated: true, user, session })
-    // Store credentials indefinitely until logout
-
-    console.log('Logged in')
-    if (persist) {
-        localStorage.setItem('userEmail', userEmail)
-        localStorage.setItem('password', password)
-        console.log('Details saved locally')
-    }
-}
+export const authLoading = ref(true) 
 
 export async function logOut () {
     localStorage.setItem('userEmail', undefined)
