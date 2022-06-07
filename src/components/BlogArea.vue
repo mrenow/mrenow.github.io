@@ -1,13 +1,12 @@
 <script setup lang="ts">
 // Blog post component. Source text can either be from a value or an external source
 // Simply use the external source to load text.
-import { Ref, ref, toRef, computed, readonly, watch, watchEffect } from 'vue'
-import Markdown from 'vue3-markdown-it'
-import MarkdownHTML from 'markdown-it-html'
-import MarkdownLatex from 'markdown-it-texmath'
-import Katex from 'katex'
-import { bindValidFlag, bindLoadingFlag } from '../scripts/helpers'
+import { Ref, ref, toRef, computed, readonly, watch, watchEffect, reactive } from 'vue'
+
+import { bindValidFlag, bindLoadingFlag, range , consolelog} from '../scripts/helpers'
 import { loadPost } from '../scripts/network'
+import { diffArrays } from 'diff'
+import Markdown from './Markdown.vue'
 
 const props = defineProps<{
     title: string
@@ -59,8 +58,32 @@ if (props.externalText !== undefined) {
 
 // Computed properties
 // Compute Markdown Preview
+let nextKey = 1
 
-const blogPreviewInnerMarkdown=computed(()=>`# ${props.title}\n${contentText.value}`)
+const markdownList = reactive([{data: "", key: 0}] as {data: string, key:number}[])
+updateMarkdown()
+watch(()=>[contentText.value, props.title], updateMarkdown)
+function updateMarkdown(){
+  const start = performance.now()
+  const newList = [`# ${props.title}`].concat(contentText.value.split(/\s*\n\s*\n/))
+  let idx = 0
+  for (const {count, added, removed, value} of diffArrays(markdownList.map(({data})=>data), newList)){
+    if ( added ){
+      markdownList.splice(idx, 0, ...value.map( x=>({data: x, key: nextKey++})))
+      idx+=count
+      continue
+    }
+    if ( removed ){
+      markdownList.splice(idx, count)
+      continue
+    }    
+    idx += count
+  }
+}
+
+
+
+
 
 function runInternalScripts () {
     if (internalScriptsLoaded) return
@@ -80,29 +103,11 @@ function runInternalScripts () {
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css"
   >
-  <Markdown
-    id="blog-preview"
-    class="card"
-    :source="blogPreviewInnerMarkdown"
-    :html="true"
-    :plugins="[
-      {plugin: MarkdownHTML,
-       options:{
-         re: /<!--!([^]*?)!-->/g
-       }
-      },
-      {plugin: MarkdownLatex,
-       options: {
-         engine: Katex,
-         delimiters: 'dollars',
-         katexOptions: {
-           macros: {}
-         }
-       }
-      }
-    ]"
-    @focusin="runInternalScripts"
-  />
+  <div id="blog-preview" class="card" 
+      @focusin="runInternalScripts">
+    <!--Need this as a separate component file due to awful v-for update shenanagans. I still do not understand-->
+    <Markdown v-for="item in markdownList" :source="item.data" :key="item.key" />
+  </div>
 </template>
 
 <style>
