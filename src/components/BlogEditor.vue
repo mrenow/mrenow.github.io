@@ -1,7 +1,9 @@
 
 <script setup lang="ts">
-import { ref,  onMounted, readonly } from 'vue'
-import { bindLoadingFlag } from '../scripts/helpers'
+import { time } from 'console';
+import { type } from 'os';
+import { ref, toRef, onMounted, readonly, reactive } from 'vue'
+import { bindLoadingFlag, storage } from '../scripts/helpers'
 import { loadPost, NoPostException, submitPost } from '../scripts/network'
 /* state management:
 use a blogeditor textarea component: this way no bindings need to be done.
@@ -19,58 +21,92 @@ expose: isSaving, textMutated, content, resources
 
 */
 
-const SAVE_FAILURE = 'save failure'
 
-const textMutated = ref(0)
-const saveable = ref(false)
+interface editDataType {
+    title: string,
+    content: string,
+    resources: string[],
+    saveable: boolean,
+    textMutated: 0,
+    modified: Date,
+}
+
+// disable the page while this loads
+const blogEditData = reactive({
+        title: '',
+        content: '',
+        resources: [],
+        saveable: false,
+        textMutated: 0,
+        modified: new Date()
+        })
 const isSaving = ref(false)
-
-const title = ref('')
 const editArea = ref(null)
-// NEVER MUTATE EXPLICITLY. Leave it to the v-models to mutate these variables
-const content = ref ('')
-const resources = ref([] as string[])
+
+loadblogEditData()
+
+async function loadblogEditData(){
+    // Want to check if the database contents are newer than the last commit.
+    let oldData
+    try{
+        oldData = storage.blogEditData as editDataType
+    } catch(err){
+        storage.blogEditData = undefined
+    }
+    console.log('oldData', oldData)
+    if (!oldData) return
+    if (oldData.title !== ''){
+        const serverData = await loadPost(oldData.title)
+        if (serverData){
+            console.log(serverData.modified, oldData.modified)
+            if(serverData.modified > oldData.modified){
+            Object.assign(blogEditData, serverData)
+            console.log('rejected', serverData)
+            return
+            }      
+        }  
+    }
+    Object.assign(blogEditData, oldData)
+    console.log('accepted', oldData)
+}
+
 
 // invalidate save state whenever the title is changed
 // clean and load 
 async function changePost(newTitle: string){
-    if (newTitle === title.value) return
-    const oldSaveable = saveable.value
-    saveable.value = false
+    if (newTitle === blogEditData.title) return
+    const oldSaveable = blogEditData.saveable
+    blogEditData.saveable = false
     // load post
     try{
-        let data : {content: string, resources: string[]}
-        try {
-            data = await loadPost(newTitle)
-        } catch (err) {
-            console.log(err)
-            if (err instanceof NoPostException) data = {content: '', resources: []}
-            else throw err
-        }
+        let data : {title:string, content: string, resources: string[], modified: Date}
+        data = (await loadPost(newTitle)) ?? {title: '', content: '', resources: [], modified: new Date()}
         await overwriteText(data.content)
-        title.value = newTitle
-        saveable.value = true
+        blogEditData.title = newTitle
+        blogEditData.saveable = true
+        storeData()
     } catch (err) {
         console.error('Something went wrong when loading the post:', err)
-        saveable.value = oldSaveable
+        blogEditData.saveable = oldSaveable
     }
 }
 
 
 async function overwriteText(text: string){
-    console.log(textMutated.value)
-    if (textMutated.value !== 0 && confirm("Save unsaved changes?") && !(await save())) throw new Error('Save Failure')
+    console.log(blogEditData.textMutated)
+    if (blogEditData.textMutated !== 0 && confirm("Save unsaved changes?") && !(await save())) throw new Error('Save Failure')
     insertText(text, 0, editArea.value.value.length)
-    textMutated.value = 0
+    blogEditData.textMutated = 0
 }
 
 async function save(){
     console.log('saving...')
     try{
-        const accountedMutations = textMutated.value
-        const data = await bindLoadingFlag(submitPost(title.value, content.value), isSaving)
+        const accountedMutations = blogEditData.textMutated
+        const data = await bindLoadingFlag(submitPost(blogEditData.title, blogEditData.content), isSaving)
         console.log('saved.')
-        textMutated.value -= accountedMutations
+        blogEditData.textMutated -= accountedMutations
+        blogEditData.modified = new Date()
         return true
     } catch (err) {
         console.log('save failed.')
@@ -86,17 +122,21 @@ function insertText (text: string, start: number = null, end: number = null) {
     if (start !== null) editArea.value.selectionStart = start
     if (end !== null) editArea.value.selectionEnd = end
     document.execCommand('insertText', false, text)
+    storeData()
 }
 
 const exposeVars = {
     changePost,
     save,
-    saveable: readonly(saveable),
     isSaving: readonly(isSaving),
-    textMutated: readonly(textMutated),
-    title: readonly(title),
-    content: readonly(content),
-    resources: readonly(resources)
+    saveable: readonly(toRef(blogEditData, 'saveable')),
+    textMutated: readonly(toRef(blogEditData, 'textMutated')),
+    title: readonly(toRef(blogEditData, 'title')),
+    content: readonly(toRef(blogEditData, 'content')),
+    resources: readonly(toRef(blogEditData, 'resources'))
+}
+function storeData(){
+    storage.blogEditData = blogEditData
 }
 
 defineExpose(exposeVars)
@@ -106,7 +146,7 @@ onMounted(() =>
     // Custom text editor behaviour
     editArea.value.addEventListener('keydown', function (e) {
 
-        if (saveable.value) textMutated.value += 1
+        if (blogEditData.saveable) blogEditData.textMutated += 1
 
         let insertString: string
         if (e.key === 'Tab') {
@@ -131,13 +171,18 @@ onMounted(() =>
 
 </script>
 <template>
-    <textarea class="flex-child-fill"
+    <textarea id="edit-area" class="flex-child-fill"
         ref="editArea"
-        v-model="content">
+        v-model="blogEditData.content"
+        @keydown="storeData">
         
     </textarea>
 </template>
 
 
 <style>
+#edit-area{
+    max-height: 100%;
+    box-sizing: border-box;
+}
 </style>

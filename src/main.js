@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, defineAsyncComponent } from 'vue'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { createPinia } from 'pinia'
@@ -9,12 +9,17 @@ import './assets/css/matStyle.css'
 import 'highlight.js/styles/monokai.css'
 import App from './App.vue'
 
-import NewBlog from './views/NewBlog.vue'
 import ViewBlog from './views/ViewBlog.vue'
 import Auth from './views/Auth.vue'
 import HomePage from './views/HomePage.vue'
 import PublicPlace from './views/PublicPlace.vue'
 import NotFound from './views/NotFound.vue'
+
+import { Quasar } from 'quasar'
+
+// Import Quasar css
+// import 'quasar/src/css/index.sass'
+
 
 // 2. Define some routes
 // Each route should map to a component.
@@ -25,7 +30,7 @@ const routes = [
     { path: '/auth', component: Auth },
     { path: '/blogs', component: ViewBlog },
     { path: '/public-place', component: PublicPlace },
-    { path: '/blog-edit', component: NewBlog },
+    { path: '/blog-edit', component: defineAsyncComponent(() => import('./views/NewBlog.vue'))},
     { path: '/:pathMatch(.*)*', component: NotFound }
 ]
 
@@ -42,5 +47,6 @@ const pinia = createPinia()
 const app = createApp(App)
     .use(router)
     .use(pinia)
+    // .use(Quasar)
     .use(Markdown)
     .mount('#app')

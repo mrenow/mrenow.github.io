@@ -67,7 +67,7 @@ setInterval(() => autosave(), 20000)
     @submit.prevent=""
   >
     <div class="content-column no-basis">
-      <div class="content-row tight">
+      <div class="content-row flex-wrap tight">
         <div>
           <h2>
             Editing "{{ editor.title }}"

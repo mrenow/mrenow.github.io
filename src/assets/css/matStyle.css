@@ -4,7 +4,7 @@ body{
     color:black;
     background-color: rgb(223, 243, 255);
     margin: 0;
-    font-family: 'Niramit', sans-serif;
+    font-family: 'Niramit', sans-serif !important;
     font-weight: 300;
     padding: 10px;
     height: 100vh;
@@ -39,7 +39,7 @@ body{
 .content-row{
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    column-gap: 10px;
 }
 
 .content-column{
@@ -85,7 +85,7 @@ body{
 .content-bar{
     display:flex;
     flex-direction: row;
-    gap: 10px;
+    column-gap: 10px;
     justify-content: space-between;
     align-items: center;
     flex: 0 1 auto;
@@ -95,6 +95,12 @@ body{
     border-radius: 6px;
     background-color: #16b3ed;
     padding: 5px;
+    flex-wrap: wrap;
+}
+
+.flex-wrap{
+    flex-wrap: wrap;
+    max-width: max-content;
 }
 .page-nav{
     display: flex;

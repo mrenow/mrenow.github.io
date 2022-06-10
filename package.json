@@ -25,11 +25,13 @@
     "vue3-markdown-it": "^1.0.10"
   },
   "devDependencies": {
+    "@quasar/vite-plugin": "^1.0.10",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
     "@vitejs/plugin-vue": "^2.2.0",
     "eslint": "^8.16.0",
     "eslint-plugin-vue": "^9.0.1",
+    "sass": "^1.32.12",
     "vite": "^2.8.0"
   }
 }

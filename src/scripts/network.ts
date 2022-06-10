@@ -33,16 +33,17 @@ function requestLock (requestId) {
 export async function loadPost (titleText: string) {
     requestLock('loadPost')
     // Load post from database
-    const { data, error } = await supabase
+    const { data, error }  = await supabase
         .from('posts')
-        .select('content')
+        .select('content, modified')
         .eq('title', titleText)
     if (error) throw error
-    if (data.length === 0) throw new NoPostException(titleText)
+    if (data.length === 0) return null
     return {
         title: titleText,
         content: data[0].content as string,
-        resources: [] as string[]
+        resources: [] as string[],
+        modified: new Date(data[0].modified as string)
     }
 }
 
@@ -70,5 +71,6 @@ export async function submitPost (title: string, content: string) {
             modified: new Date().toISOString()
         })
     if (error) throw error
+    console.log(data)
     return data
 }

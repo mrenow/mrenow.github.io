@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { bindLoadingFlag } from '../scripts/helpers';
 import { loadTitles } from '../scripts/network'
 // Component which exposes a title from a search field.
 
@@ -9,14 +10,19 @@ const props = defineProps<{
     notExistsText? : string
     onSubmit?:(title:string) => void
 }>()
-
+const isLoading = ref(false)
 const allTitles = ref([])
 const title = ref('')
 const titleNotExists = computed(() => !allTitles.value.includes(title.value))
 
 async function updateTitles () {
-    allTitles.value = await loadTitles()
+    allTitles.value = await bindLoadingFlag(loadTitles(), isLoading)
 }
+// const exposeVars = {
+//     isLoading
+// }
+
+// defineExpose(exposeVars)
 onMounted(updateTitles) // Perform in pinia later
 </script>
 

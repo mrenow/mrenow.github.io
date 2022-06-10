@@ -18,7 +18,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:isLoading'])
 
 const contentTextValid = ref(false)
-
+const markdown : Ref<HTMLDivElement> = ref(null)
 let internalScriptsLoaded = false
 
 const isLoadingValue = computed({
@@ -63,13 +63,15 @@ let nextKey = 1
 const markdownList = reactive([{data: "", key: 0}] as {data: string, key:number}[])
 updateMarkdown()
 watch(()=>[contentText.value, props.title], updateMarkdown)
+
 function updateMarkdown(){
-  const start = performance.now()
   const newList = [`# ${props.title}`].concat(contentText.value.split(/\s*\n\s*\n/))
   let idx = 0
+  let addIndices = []
   for (const {count, added, removed, value} of diffArrays(markdownList.map(({data})=>data), newList)){
     if ( added ){
-      markdownList.splice(idx, 0, ...value.map( x=>({data: x, key: nextKey++})))
+      addIndices.concat(range(idx, idx+count))
+      markdownList.splice(idx, 0, ...value.map((x: string) => ({data: x, key: nextKey++})))
       idx+=count
       continue
     }
@@ -79,11 +81,13 @@ function updateMarkdown(){
     }    
     idx += count
   }
+  handleTextAdded(addIndices)
 }
 
-
-
-
+function handleTextAdded(addIndices){
+  // markdown.value.scrollIntoView
+  addIndices[0]
+}
 
 function runInternalScripts () {
     if (internalScriptsLoaded) return
@@ -106,7 +110,7 @@ function runInternalScripts () {
   <div id="blog-preview" class="card" 
       @focusin="runInternalScripts">
     <!--Need this as a separate component file due to awful v-for update shenanagans. I still do not understand-->
-    <Markdown v-for="item in markdownList" :source="item.data" :key="item.key" />
+    <Markdown ref="markdown" v-for="item in markdownList" :source="item.data" :key="item.key" />
   </div>
 </template>
 
@@ -128,8 +132,12 @@ code{
 }
 
 #blog-preview{
-    overflow-y: scroll;
-    word-wrap: break-word;
+  overflow-y: scroll;
+  word-wrap: break-word;
+  /* flex: 0 1 auto; */
+  height:500px;
+  max-height: auto;
+  box-sizing: border-box;
 }
 
 </style>
